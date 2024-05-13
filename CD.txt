@@ -46,6 +46,63 @@ int main() {
 
  
 
+
+
+// File: Calculator.java
+
+import java.util.Scanner;
+
+public class Calculator {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        double num1, num2;
+        char operator;
+
+        System.out.print("Enter first number: ");
+        num1 = input.nextDouble();
+
+        System.out.print("Enter operator (+, -, *, /): ");
+        operator = input.next().charAt(0);
+
+        System.out.print("Enter second number: ");
+        num2 = input.nextDouble();
+
+        double result = 0;
+
+        switch (operator) {
+            case '+':
+                result = num1 + num2;
+                break;
+            case '-':
+                result = num1 - num2;
+                break;
+            case '*':
+                result = num1 * num2;
+                break;
+            case '/':
+                if (num2 != 0) {
+                    result = num1 / num2;
+                } else {
+                    System.out.println("Error: Division by zero!");
+                    return;
+                }
+                break;
+            default:
+                System.out.println("Error: Invalid operator!");
+                return;
+        }
+
+        System.out.println("Result: " + result);
+    }
+}
+
+
+
+
+
+
+
+
 Scanner & Parser
 Exp 2. Write a program using FLEX.
 filename: exp2.flex
@@ -65,9 +122,60 @@ printf("Enter the String : ");yylex();
 int yywrap(){}
 
 
- 
+flex ex2.flex
+gcc lex.yy.c
 
 
+
+
+
+
+lex program for calculator:
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+%}
+
+%%
+
+[0-9]+          { printf("Number: %s\n", yytext); }
+[ \t\n]         ; /* Ignore whitespace and newlines */
+"+"             { printf("Operator: +\n"); }
+"-"             { printf("Operator: -\n"); }
+"*"             { printf("Operator: *\n"); }
+"/"             { printf("Operator: /\n"); }
+.               { printf("Invalid character: %s\n", yytext); }
+
+%%
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <input_file>\n", argv[0]);
+        return 1;
+    }
+
+    FILE *file = fopen(argv[1], "r");
+    if (!file) {
+        perror("fopen");
+        return 1;
+    }
+
+    yyin = file;
+    yylex();
+
+    fclose(file);
+    return 0;
+}
+
+
+
+flex calculator.l
+
+gcc lex.yy.c -o calculator -ll
+
+
+./calculator input.txt
 
 
 
